@@ -1,39 +1,39 @@
 import { useState } from 'react';
-let users;
 const API = 'https://jsonplaceholder.typicode.com/users';
-
-fetch(API)
-    .then((response) => response.json())
-    .then((array) => {
-        users = array;
-    });
 
 const SignInPage = () => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [id, setID] = useState('');
+
     const handleSubmit = (users) => {
-        for (let i = 0; i < users.length; i++) {
-            if (checkUser(users[i])) {
-                console.log(' sign in successful! ');
-                setEmail(' ');
-                setPassword('');
-            } else {
-                console.log(
-                    'email or password is incorrect!!!',
-                );
-                setEmail(' ');
-                setPassword('');
-            }
+        let check = false;
+        fetch(API)
+            .then((response) => response.json())
+            .then((array) => {
+                let users = array;
+                for (let i = 0; i < users.length; i++) {
+                    console.log(checkUser(users[i]));
+                    if (checkUser(users[i]) === 1) {
+                        check = true;
+                        setEmail(' ');
+                        setID('');
+                        break;
+                    }
+                }
+            });
+        if (check) console.log('successfull');
+        else {
+            console.log('fault');
+            setEmail('');
+            setID('');
         }
     };
     const checkUser = (user) => {
         // eslint-disable-next-line eqeqeq
-        if (user.email === email) {
-            if (user.id === password) {
-                return true;
-            }
-            return false;
-        } else return false;
+        if (user.email === email && user.id === id) {
+            return 1;
+        }
+        return 0;
     };
     return (
         <div id="form_1" className="format ">
@@ -43,42 +43,34 @@ const SignInPage = () => {
                 Your account for everything in{' '}
             </p>
             <div className="elements">
-                <lable
-                    for="Email"
-                    className="BoxName"
-                    value={email}
-                    onChange={(e) =>
-                        setEmail(e.target.values)
-                    }
-                >
+                <label for="Email" className="BoxName">
                     Email
-                </lable>
+                </label>
                 <input
                     id="Email"
                     className="box"
                     type="text"
                     placeholder="VD : abc@gmail.com"
-                />
+                    value={email}
+                    onChange={(e) =>
+                        setEmail(e.target.values)
+                    }
+                ></input>
                 <br />
                 <span className="message"></span>
             </div>
             <div className="elements">
-                <lable
-                    for="Pass_word"
-                    className="BoxName"
-                    value={password}
-                    onChange={(e) =>
-                        setPassword(e.target.value)
-                    }
-                >
-                    Password
-                </lable>
+                <label for="Pass_word" className="BoxName">
+                    ID
+                </label>
                 <input
                     id="Pass_word"
                     className="box"
                     type="text"
                     placeholder="VD : 0123456789"
-                />
+                    value={id}
+                    onChange={(e) => setID(e.target.value)}
+                ></input>
                 <br />
                 <span className="message"></span>
             </div>
